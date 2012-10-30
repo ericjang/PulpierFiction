@@ -1,0 +1,55 @@
+extends layout
+
+block header_menu
+	a.brand(href='/') Pulpier Fiction
+	div.nav-collapse.collapse
+		ul.nav
+			li
+				a(href="/") Home
+			li
+				a(href="/stories") Stories
+			li
+				a(href='/about') About
+			li
+				a(href='/contact') Contact
+			li
+				- if (everyauth.loggedIn)
+					a(href='/logout')
+						| Logout (
+						=everyauth.facebook.user.name
+						| )
+block custom_styles
+	style
+		.story span {border-bottom:1px solid blue;}
+
+block content
+	- if (!everyauth.loggedIn)
+		p You need to be logged in in order to play Pulpier Fiction.
+		button#playbutton.btn.btn-primary(type="button",style="margin:auto; width:100px;") Log in with Facebook
+	- else
+		div.row-fluid
+			div.span6.offset3(style="text-align:center")
+				div#messages
+		div.row-fluid
+			div.span3.offset3
+				img#tumblr_img(src="", style="width:300px; float:right")
+			div.span4
+				div.row-fluid
+					img#bebas_quote(src="", style="float:left")
+					h2#storytitle Loading Next Story ...
+				div.row-fluid
+					p.story
+				div.row-fluid
+					input#threewords(type="text", placeholder="Enter your 3 words", autofocus="autofocus", style="width: 250px;margin:auto", pattern="([\w\p{P}.?']+)\s([\w\p{P}.?']+)\s([\w\p{P}.?]+)", maxlength="100")
+					button#submit.btn.btn-primary(type="button",style="margin:auto; width:100px") Submit
+		div#user_id(style="visibility : hidden")
+			p= everyauth.facebook.user.id
+		div#access_token(style="visibility : hidden")
+			p= everyauth.facebook.accessToken
+		div#spamflag_wrapper(style="display:none;")
+			button#flagspam.btn.btn-danger(type="button",style="margin:auto; width:210px") Flag as Spam
+		#results
+
+block customscripts
+	- if (everyauth.loggedIn)
+		script(defer, src='js/play.js')

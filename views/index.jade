@@ -1,5 +1,154 @@
 extends layout
 
+
+block custom_styles
+	style
+		#stories span {border-bottom:1px solid black;}
+
 block content
-	h1 Bootstrap starter template
-	p Use this document as a quick way to start any project!
+	div#heading.row-fluid
+		div.span4.offset4
+			img(src="images/pulpierfiction_printlogo.png")
+	div#sample_stories.row-fluid(style="height : 120px;margin-top:20px")
+		div.span4.offset4
+			img#bebas_quote(src="", style="float:left;width:50px")
+			ul#stories(style="margin-left:50px")
+				p
+					span On a night
+					| 
+					span most dark and
+					| 
+					span my elbow itches
+					| 
+					span and I can't
+					| 
+					span seem to find
+					| 
+					span the matches or
+					| 
+					span my daughter, but
+					| 
+					span that's okay because
+					| 
+					span I don't love
+					| 
+					span her as much
+					| 
+					span as I love
+					| 
+					span my itchy elbow...
+				p
+					span Madeline was having
+					| 
+					span a splendid day
+					| 
+					span until Dr. Manhattan
+					| 
+					span blew her up
+					| 
+					span into tiny pieces.
+					| 
+					span "Sorry," said the
+					| 
+					span good Doctor. "I
+					| 
+					span get a little 
+					| 
+					span sensitive when someone
+					| 
+					span messes up my..."
+				p
+					span The boy had
+					| 
+					span a lightning-bolt shaped
+					| 
+					span scar on his
+					| 
+					span forehead. You must
+					| 
+					span be thinking that this
+					| 
+					span boy is Harry
+					| 
+					span Potter. Wrong! In
+					| 
+					span fact, lots of
+					| 
+					span boys who get
+					| 
+					span into car accidents
+					| 
+					span end up with
+					| 
+					span scars like that.
+					| 
+					span Beside's Harry Potter's
+					| 
+					span scar doesn't even
+					| 
+					span look like a
+					| 
+					span fucking lightning bolt...
+				p
+					span Madeline was having
+					| 
+					span a splendid day
+					| 
+					span until Dr. Manhattan
+					| 
+					span blew her up
+					| 
+					span into tiny pieces.
+					| 
+					span "Sorry," said the
+					| 
+					span good Doctor. "I
+					| 
+					span get a little 
+					| 
+					span sensitive when someone
+					| 
+					span messes up my..."
+				p
+					span The little mouse
+					| 
+					span had a breakfast
+					| 
+					span of milk and
+					| 
+					span CAT MEAT. That's
+					| 
+					span right, CAT MEAT.
+					| 
+					span As it so
+					| 
+					span turns out, mice
+					| 
+					span have an incredible
+					| 
+					span fondness for cat
+					| 
+					span flesh and biscotti
+					| 
+					span and would gladly
+					| 
+					span hunt cats down
+					| 
+					span and eat biscotti
+					| 
+					span all day if
+					| 
+					span cats weren't so
+					| 
+					span damned big and
+					| 
+					span if biscotti ovens
+					| 
+					span came in 'miniature'...
+	div.row-fluid(style="text-align:center")
+		p What happens next? You decide!
+	div.row-fluid(style="text-align: center")
+		button#playbutton.btn.btn-primary(type="button",style="margin-top:20px; margin-left:auto; margin-right:auto; width:100px;") Play Now!
+block customscripts
+	script(src='js/index.js')
+	script(defer, src='js/jquery.cycle.lite.js')

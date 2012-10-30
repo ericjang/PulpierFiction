@@ -1,17 +1,52 @@
 extends layout
 
 block header_menu
-	a.brand(href='/') Project name
+	a.brand(href='/') Pulpier Fiction
 	div.nav-collapse.collapse
 		ul.nav
 			li
 				a(href="/") Home
+			li
+				a(href="/stories") Stories
 			li.active
 				a(href='#') About
 			li
 				a(href='/contact') Contact
 
-block content
-	h1 About
-	p This is the about page!
+block custom_styles
+	style
+		i {margin-right:10px}
 
+block content
+	div.row-fluid
+		div.span6.offset3
+			h1 "Call me Ishmael..."
+			p Stories that make you laugh...
+			p Stories that make you cry...
+			p Stories that make you lose your faith in Humanity. 
+				| 
+				span(style="color:#af1b1b") Forever.
+			p Pulpier Fiction is a collaborative story-writing app based on a previous hack done at the HackNY Hackathon.
+			h2(style="color:#1b7916") Gameplay
+			p
+				i.icon-pencil
+				| Continue the story given to you
+				b ... using no more than three words.
+				| 
+				| Repeat!
+			p
+				i.icon-star
+				| Points are accumulated for submitting words. It's a competiton!
+			p 
+				i.icon-remove
+				| Users who spam nonsensical content or demonstrate poor comprehension of the English Language will receive a warning.
+			p 
+				i.icon-remove
+				| Profanity is tolerated but excessive use will result in a warning.
+			p 
+				i.icon-remove
+				| If you receive a warning and continue to misuse Pulpier Fiction, you will be permanently banned.
+			h2(stye="color:") Completed Stories
+			p 
+				| To read completed masterpieces (or garbage) of over 300 words, 
+				a(href="/stories") click here.

@@ -1,0 +1,38 @@
+//-this page renders any achievement for Open Graph. Achievements defined on Server.
+!!! 5
+//if lt IE 7
+	html.no-js.ie6.oldie(lang='en')
+//if IE 7
+	html.no-js.ie7.oldie(lang='en')
+//if IE 8
+	html.no-js.ie8.oldie(lang='en') 
+//[if gt IE 8]><!
+html.no-js(lang='en',xmlns="http://www.w3.org/1999/xhtml",xmlns:og="http://ogp.me/ns#")
+	//<![end if]
+	head
+		meta(charset='utf-8')
+		meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+		title=title
+		meta(name="author", content=author)
+		meta(name="viewport", content='width=device-width, initial-scale=1')
+		//Facebook Open Graph Stuff
+		meta(property="og:type",content="game.achievement")
+		meta(property="og:url",content="pulpierfiction.aws.af.cm/"+url)
+		meta(property="og:title",content=title)
+		meta(property="og:description",content=description)
+		meta(property="og:image",content=img_url)
+		meta(property="game:points",content=points)
+		meta(property="fb:app_id",content="131998673616071")
+		link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/bootstrap-responsive.min.css')
+		style
+			body {
+				background : url('images/bg_tile.png');
+				background-repeat : repeat;
+			}
+		block custom_styles
+		body
+			h1 Congratulations!
+			p 
+				| You just achieved
+				=achievementMessage

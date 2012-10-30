@@ -1,0 +1,52 @@
+extends layout
+
+block header_menu
+	a.brand(href='/') Pulpier Fiction
+	div.nav-collapse.collapse
+		ul.nav
+			li
+				a(href="/") Home
+			li.active
+				a(href="/stories") Stories
+			li
+				a(href='#') About
+			li
+				a(href='/contact') Contact
+
+block custom_styles
+	link(rel='stylesheet', href='css/jquery.fancybox.css')
+	link(rel='stylesheet', href='css/jquery.fancybox-buttons.css')
+	link(rel='stylesheet', href='css/jquery.fancybox-thumbs.css')
+	style
+		
+
+block content
+	div#heading.row-fluid(style="position:fixed")
+		div.span6.offset3
+			img(src="images/storieslogo.png")
+	div.spacer.row-fluid(style="height:100px")
+	div.row-fluid
+		div.span6.offset3
+			div#bookshelf
+				- for (var i in bookshelf)
+					//create a row with the following spans
+					div.row-fluid.shelf(style="margin-bottom:1px")
+						- if (i == 0)
+								img(src="images/shelf_top.png",style="width:700px;margin-bottom:-50px")
+						- else
+								img(src="images/shelf.png",style="width:700px;margin-bottom:-50px")
+						- for (var j in bookshelf[i])
+							div.span2.cover(style="text-align:center;position:relative")
+								//-all of its child elements will be positioned relative to it
+								a(href="#"+bookshelf[i][j].story_id,story_id=bookshelf[i][j].story_id)
+									img(src=bookshelf[i][j].cover_pic,style="position:absolute;bottom:0;margin-left:-10px")
+	div#hiddenstories(style="display:none")
+		//-stories actually saved into webpage (display:none).
+		//have a story_id and class=story! <-- this is important
+		
+
+block customscripts
+	script(defer, src='js/jquery.fancybox.pack.js')
+	script(defer, src='js/jquery.fancybox-buttons.js')
+	script(defer, src='js/jquery.fancybox-thumbs.js')
+	script(defer, src='js/stories.js')
