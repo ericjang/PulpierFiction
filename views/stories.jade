@@ -27,19 +27,23 @@ block content
 	div.spacer.row-fluid(style="height:100px")
 	div.row-fluid
 		div.span6.offset3
-			div#bookshelf
-				- for (var i in bookshelf)
-					//create a row with the following spans
-					div.row-fluid.shelf(style="margin-bottom:1px")
-						- if (i == 0)
-								img(src="images/shelf_top.png",style="width:700px;margin-bottom:-50px")
-						- else
-								img(src="images/shelf.png",style="width:700px;margin-bottom:-50px")
-						- for (var j in bookshelf[i])
-							div.span2.cover(style="text-align:center;position:relative")
-								//-all of its child elements will be positioned relative to it
-								a(href="#"+bookshelf[i][j].story_id,story_id=bookshelf[i][j].story_id)
-									img(src=bookshelf[i][j].cover_pic,style="position:absolute;bottom:0;margin-left:-10px")
+			- if (bookshelf.length == 0)
+				div(style="text-align:center")
+					p Completed stories will appear here for everyone to read!
+			- else
+				div#bookshelf
+					- for (var i in bookshelf)
+						//create a row with the following spans
+						div.row-fluid.shelf(style="margin-bottom:1px")
+							- if (i == 0)
+									img(src="images/shelf_top.png",style="width:700px;margin-bottom:-50px")
+							- else
+									img(src="images/shelf.png",style="width:700px;margin-bottom:-50px")
+							- for (var j in bookshelf[i])
+								div.span2.cover(style="text-align:center;position:relative")
+									//-all of its child elements will be positioned relative to it
+									a(href="#"+bookshelf[i][j].story_id,story_id=bookshelf[i][j].story_id)
+										img(src=bookshelf[i][j].cover_pic,style="position:absolute;bottom:0;margin-left:-10px")
 	div#hiddenstories(style="display:none")
 		//-stories actually saved into webpage (display:none).
 		//have a story_id and class=story! <-- this is important

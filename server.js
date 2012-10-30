@@ -600,6 +600,8 @@ server.get('/stories', function(req,res){
 		count += 1;
 		
 	}
+	
+	debugger;//check what bookshelf looks like
  	res.render('stories.jade', {
     	locals : { 
               title : 'Pulpier Fiction : Stories'
