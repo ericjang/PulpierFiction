@@ -2,8 +2,7 @@
 var connect = require('connect')
     , express = require('express')
     , io = require('socket.io')
-    , port = (process.env.VMC_APP_PORT || 8081)
-		, host = (process.env.VCAP_APP_HOST || 'localhost')//configuring for appfog...
+    , port = (process.env.PORT || 8081)
 		, everyauth = require('everyauth')
 		, sanitize = require('validator').sanitize
 		, mongodb = require('mongodb')
@@ -19,36 +18,7 @@ var connect = require('connect')
 		, cached_finished = {}
 		, blocklist = {};
 
-if(process.env.VCAP_SERVICES){
-    var env = JSON.parse(process.env.VCAP_SERVICES);
-    var mongo_config = env['mongodb-1.8'][0]['credentials'];
-} else {
-    var mongo_config = {
-    "hostname":"localhost",
-    "port":27017,
-    "username":"",
-    "password":"",
-    "name":"",
-    "db":"pulpierfiction_db"
-    }
-}
-
-var generate_mongo_url = function(obj){
-    obj.hostname = (obj.hostname || 'localhost');
-    obj.port = (obj.port || 27017);
-    obj.db = (obj.db || 'test');
-
-    if(obj.username && obj.password){
-        return "mongodb://" + obj.username + ":" + obj.password + "@" + obj.hostname + ":" + obj.port + "/" + obj.db;
-    }
-    else{
-        return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db;
-    }
-}
-
-var mongourl = generate_mongo_url(mongo_config);
-
-console.log('mongodb is at ',mongourl);
+var mongourl = (process.env.MONGOHQ_URL) ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
 
 var db = mongo.db(mongourl);
 
@@ -57,6 +27,39 @@ var finished_stories = db.collection('finished_stories');
 var users = db.collection('users');
 var user_blocklist = db.collection('user_blocklist');
 var logs = db.collection('logs');
+
+// if(process.env.VCAP_SERVICES){
+//     var env = JSON.parse(process.env.VCAP_SERVICES);
+//     var mongo_config = env['mongodb-1.8'][0]['credentials'];
+// } else {
+//     var mongo_config = {
+//     "hostname":"localhost",
+//     "port":27017,
+//     "username":"",
+//     "password":"",
+//     "name":"",
+//     "db":"pulpierfiction_db"
+//     }
+// }
+// 
+// var generate_mongo_url = function(obj){
+//     obj.hostname = (obj.hostname || 'localhost');
+//     obj.port = (obj.port || 27017);
+//     obj.db = (obj.db || 'test');
+// 
+//     if(obj.username && obj.password){
+//         return "mongodb://" + obj.username + ":" + obj.password + "@" + obj.hostname + ":" + obj.port + "/" + obj.db;
+//     }
+//     else{
+//         return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db;
+//     }
+// }
+
+//var mongourl = generate_mongo_url(mongo_config);
+
+//console.log('mongodb is at ',mongourl);
+
+
 
 everyauth.debug = true;
 
@@ -136,7 +139,7 @@ server.error(function(err, req, res, next){
 			}, status: 500 });
   }
 });
-server.listen(port,host);
+server.listen(port);
 
 
 
