@@ -18,7 +18,8 @@ var connect = require('connect')
 		, word_limit = 500//max number words before story becomes inactive
 		, cached_finished = {}
 		, blocklist = {}
-		, achievementsList = require('./achievements.json');
+		, achievementsList = require('./achievements.json')
+		, racistList = require('./racist.json');
 
 var mongourl = (process.env.NODE_ENV == 'production') ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
 var db = mongo.db(mongourl);
@@ -460,6 +461,24 @@ io.sockets.on('connection', function(socket){
 			var message = '<div class="alert"><button type="button" class="close" data-dismiss="alert">×</button>Sorry! Your entry wasn\'t formatted right. Please enter 3 words only</div>';
 			socket.emit('user message',message);	
 		}
+		
+		//check for profanity
+		for (var i in words) {
+			if (racistList.hasOwnProperty(words[i].toLowerCase())) {
+				//make the POST request to the FB api
+				var ach = achievementsList["dickweed"];
+				//facebook should ignore multiple instances of achievement..
+				request({
+						uri : 'https://graph.facebook.com/'+ user_id +'/achievements?achievement=http://pulpier-fiction.herokuapp.com'+ach.url+'&access_token=131998673616071|l4c8OtBmJWG-uWknTBrR589S7LU'
+					, method : 'POST'
+				},function(err){
+					if (err) console.log('problem with facebook achievement request...');
+				});
+			}
+		}
+		
+		
+		
 		
 		var story_objID;
 		try {
