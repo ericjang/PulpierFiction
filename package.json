@@ -15,13 +15,15 @@
 		"mongoskin" : "*",
 		"request" : "*",
 		"moniker" : "*",
-		"cron" : "*",
-		"time":"*"
+		"cron" : "*"
   },
   "devDependencies": {
     "vows": "0.5.x",
 	"mocha": "*",
 	"should": "*"
   },
-  "engine": "node >= 0.6.6"
+  "engines": {
+  		"node": "0.8.x",
+			"npm": "1.1.x"
+  }
 }

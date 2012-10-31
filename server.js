@@ -11,7 +11,6 @@ var connect = require('connect')
 		, mongo = require('mongoskin')
 		, wordsToImage = require("./tumblr-wordsToImage")
 		, moniker = require("moniker")
-		, time = require("time")
 		, adj_generator = moniker.generator([moniker.adjective])
 		, noun_generator = moniker.generator([moniker.noun])
 		, cron = require('cron')
@@ -22,7 +21,7 @@ var connect = require('connect')
 
 if(process.env.VCAP_SERVICES){
     var env = JSON.parse(process.env.VCAP_SERVICES);
-    var mongo = env['mongodb-1.8'][0]['credentials'];
+    var mongo_config = env['mongodb-1.8'][0]['credentials'];
 } else {
     var mongo_config = {
     "hostname":"localhost",
@@ -477,23 +476,23 @@ io.sockets.on('connection', function(socket){
 			,	access_token = sanitize(user.access_token).xss();
 		
 		
-		//check if user has any messages waiting for them
 		users.findOne({id:user_id},function(err,user){
 			if (err) return false;
+			//check if user has any messages waiting for them
 			if (user !== null && user.unreadMessages.length > 0) {
 				//has messages! send them to user.
+				
 				for (var i = 0, ii = user.unreadMessages.length; i < ii; i++) {
+					debugger;
 					socket.emit('user message',user.unreadMessages[i]);
 				}
 				user.unreadMessages = [];//clear messages
 				users.save(user,function(err,ok){});
 			}
 			
-			
-			
 			//probability new story is created is 1 if activeStories < 4, else 0.2
-			var P_new = (activeStories < 4) ? 1 : 0.2;
-		
+			var P_new = (activeStories < 1) ? 1 : (1/activeStories);
+			console.log('active Stories...',activeStories);
 			if (Math.random() < P_new) {
 				activeStories += 1;
 				var new_story = create_story(user_id);
@@ -636,25 +635,25 @@ server.get('/contact', function(req,res){
             }
   });
 });
-
-server.get('/shift', function(req,res){
-	stories.findOne({},function(err,story){
-		move_finished(story);
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		res.end('Done!\n');
-	});
-});
-
-server.get('/updatecache',function(req,res){
-	console.log('starting cron job for cached_finished...');
-	finished_stories.find({},function(err,cursor){
-		cursor.each(function(err,story){
-			if (story !== null) cached_finished[story._id] = story;
-		});
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		res.end('Done!\n');
-	});
-});
+// 
+// server.get('/shift', function(req,res){
+// 	stories.findOne({},function(err,story){
+// 		move_finished(story);
+// 		res.writeHead(200, {'Content-Type': 'text/plain'});
+// 		res.end('Done!\n');
+// 	});
+// });
+// 
+// server.get('/updatecache',function(req,res){
+// 	console.log('starting cron job for cached_finished...');
+// 	finished_stories.find({},function(err,cursor){
+// 		cursor.each(function(err,story){
+// 			if (story !== null) cached_finished[story._id] = story;
+// 		});
+// 		res.writeHead(200, {'Content-Type': 'text/plain'});
+// 		res.end('Done!\n');
+// 	});
+// });
 
 
 //achievements urls -> need to be scraped by Facebook
@@ -729,8 +728,7 @@ var updateFinished = new cron.CronJob('0 0 * * *', function(){
 		//logs.insert('successfully updated cached finished books...',function(err,ok){})''
 		console.log('updated cached finished books at ',now.toUTCString());
   }, 
-  true /* Start the job right now */,
-  "America/New_York" /* Time zone of this job. */
+  true /* Start the job right now */
 );
 
 
@@ -750,9 +748,18 @@ var updateBlocklist = new cron.CronJob('0 0 * * *', function(){
 		//logs.insert('successfully updated cached finished books...',function(err,ok){})''
 		console.log('updated cached blocklist at ',now.toUTCString());
   }, 
-  true /* Start the job right now */,
-  "America/New_York" /* Time zone of this job. */
+  true /* Start the job right now */
 );
+
+var updateActive = new cron.CronJob('5 0 * * *',function(){
+	//update number of active stories
+	activeStories = 0;
+	stories.find({$or:[{'lock':{$exists:false}},{'lock.created':{$lte:Date.now()-300000}}]},function(err,cursor){
+		cursor.each(function(err,story){
+			activeStories += 1;
+		})
+	});
+},function(){},true);
 
 
 
