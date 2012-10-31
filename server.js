@@ -382,7 +382,17 @@ function renderStory(user_id,story,words,lastEdited) {
 
 
 //Setup Socket.IO
-var io = io.listen(server,{'log level':1});
+
+if (process.env.NODE_ENV == 'production') {
+	var io = io.listen(server,{
+		'log level':1,
+		"transports" : ["xhr-polling"],
+		"polling duration", 10
+	});
+} else {
+	var io = io.listen(server); 
+}
+
 io.sockets.on('connection', function(socket){
   
 	function sendStory(user_id,access_token,query){
