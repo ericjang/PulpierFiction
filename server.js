@@ -609,7 +609,7 @@ server.get('/', function(req,res){
               title : 'Pulpier Fiction'
              ,description: 'Real Time Collaborative Mad Libs'
              ,author: 'Eric Jang'
-             ,analyticssiteid: 'UA-35901019-1' 
+             ,analyticssiteid: 'UA-35901019-2' 
             }
   });
 });
@@ -624,7 +624,7 @@ server.get('/play',function(req,res){
 			title : 'Pulpier Fiction'
 			,description: 'Real Time Collaborative Mad Libs'
 			,author: 'Eric Jang'
-			,analyticssiteid: 'UA-35901019-1' 
+			,analyticssiteid: 'UA-35901019-2' 
 		}
 	});
 });
@@ -669,7 +669,7 @@ server.get('/stories', function(req,res){
               title : 'Pulpier Fiction : Stories'
              ,description: 'Real Time Stories'
              ,author: 'Eric Jang'
-             ,analyticssiteid: 'UA-35901019-1'
+             ,analyticssiteid: 'UA-35901019-2'
 			 			 ,bookshelf:bookshelf 
             }
   });
@@ -683,7 +683,7 @@ server.get('/about', function(req,res){
               title : 'Pulpier Fiction : About'
              ,description: 'Your Page Description'
              ,author: 'Eric Jang'
-             ,analyticssiteid: 'UA-35901019-1' 
+             ,analyticssiteid: 'UA-35901019-2' 
             }
   });
 });
@@ -694,7 +694,7 @@ server.get('/contact', function(req,res){
               title : 'Pulpier Fiction : Contact'
              ,description: 'Your Page Description'
              ,author: 'Eric Jang'
-             ,analyticssiteid: 'UA-35901019-1' 
+             ,analyticssiteid: 'UA-35901019-2' 
             }
   });
 });
@@ -733,7 +733,7 @@ for (var point in achievementsList) {
 	             ,author: 'Eric Jang'
 							 ,points : (achievementsList[point].point_val) ? achievementsList[point].point_val : point
 							 ,url: url
-	             ,analyticssiteid: 'UA-35901019-1'
+	             ,analyticssiteid: 'UA-35901019-2'
 	            }
 	  });
 	});
