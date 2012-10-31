@@ -384,16 +384,18 @@ function renderStory(user_id,story,words,lastEdited) {
 
 //Setup Socket.IO
 
-if (process.env.NODE_ENV == 'production') {
-	io.configure(function(){
-		io.set("transports", ["xhr-polling"]); 
-		io.set("polling duration", 10);
-		io.set("log level",1); 
-	});
-	io.listen(server);
-} else {
-	var io = io.listen(server); 
-}
+
+var io = io.listen(server);
+
+io.configure('production',function(){
+	io.set("transports", ["xhr-polling"]); 
+	io.set("polling duration", 10);
+	io.set("log level",1);
+});
+
+
+
+
 
 io.sockets.on('connection', function(socket){
   
