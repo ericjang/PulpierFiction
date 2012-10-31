@@ -18,7 +18,7 @@ var connect = require('connect')
 		, cached_finished = {}
 		, blocklist = {};
 
-var mongourl = (process.env.MONGOHQ_URL) ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
+var mongourl = (process.env.NODE_ENV == 'production') ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
 
 var db = mongo.db(mongourl);
 
