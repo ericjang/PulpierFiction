@@ -489,7 +489,7 @@ io.sockets.on('connection', function(socket){
 					//update the user's achievements
 					users.findOne({id:user_id},function(err,user){
 						if (err) return false;
-						
+						if (user === null) return false;
 						user.points += 1;
 						if (achievementsList.hasOwnProperty(user.points)) {
 							debugger;//check achievementsList
