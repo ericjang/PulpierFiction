@@ -18,9 +18,9 @@
 		"img_url":"http://poestories.com/images/poe_portrait.jpg"
 	},
 	"3":{
-		"url":"/",
+		"url":"/goodjob",
 		"title":"Good Job",
-		"condition":"... doing a good job",
+		"condition":"... doing a good job (3 snippets submitted)",
 		"img_url":"http://public.wsu.edu/~campbelld/pics/emily.jpg"
 	},
 	"5":{
@@ -33,7 +33,7 @@
 		"url":"/endurance",
 		"title":"Endurance",
 		"condition":"not giving up even when we witheld rewards from you.",
-		"img_url":""
+		"img_url":"http://images.pictureshunt.com/pics/r/rocky_balboa-10762.jpg"
 	},
 	"dickweed":{
 		"url":"/dickweed",
