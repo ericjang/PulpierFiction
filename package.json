@@ -15,8 +15,7 @@
 		"mongoskin" : "*",
 		"request" : "*",
 		"moniker" : "*",
-		"cron" : "*",
-		"request":"*"
+		"cron" : "*"
   },
   "devDependencies": {
     "vows": "0.5.x",

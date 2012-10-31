@@ -64,9 +64,7 @@ $(document).ready(function() {
 			var pageHTML = '<div id=' + story_id + '_' + i +
 												' class=\"' + story_id +'\">'+
 												'<img id='+ story_id + '_' + i + 'img' +' src=\"'+ page.img + '\" style=\"width:400px\">' +
-												'<p>'+ page.text +'</p>'
-											'</div>'
-											
+												'<p>'+ page.text +'</p>' + '</div>';					
 			$('#'+ story_id).append(pageHTML);
 		}
 		

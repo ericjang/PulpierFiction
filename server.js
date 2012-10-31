@@ -19,7 +19,8 @@ var connect = require('connect')
 		, cached_finished = {}
 		, blocklist = {}
 		, achievementsList = require('./achievements.json')
-		, racistList = require('./racist.json');
+		, racistList = require('./racist.json')
+		, firstWords = require('./firstWords');
 
 var mongourl = (process.env.NODE_ENV == 'production') ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
 var db = mongo.db(mongourl);
@@ -30,49 +31,7 @@ var users = db.collection('users');
 var user_blocklist = db.collection('user_blocklist');
 var logs = db.collection('logs');
 
-// if(process.env.VCAP_SERVICES){
-//     var env = JSON.parse(process.env.VCAP_SERVICES);
-//     var mongo_config = env['mongodb-1.8'][0]['credentials'];
-// } else {
-//     var mongo_config = {
-//     "hostname":"localhost",
-//     "port":27017,
-//     "username":"",
-//     "password":"",
-//     "name":"",
-//     "db":"pulpierfiction_db"
-//     }
-// }
-// 
-// var generate_mongo_url = function(obj){
-//     obj.hostname = (obj.hostname || 'localhost');
-//     obj.port = (obj.port || 27017);
-//     obj.db = (obj.db || 'test');
-// 
-//     if(obj.username && obj.password){
-//         return "mongodb://" + obj.username + ":" + obj.password + "@" + obj.hostname + ":" + obj.port + "/" + obj.db;
-//     }
-//     else{
-//         return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db;
-//     }
-// }
-
-//var mongourl = generate_mongo_url(mongo_config);
-
-//console.log('mongodb is at ',mongourl);
-
-
-
 everyauth.debug = true;
-
-
-// everyauth.everymodule
-//   .findUserById( function (id, callback) {
-//     console.log('foobar');
-// 		users.findOne(id,callback);
-//     // or more succinctly, if your api sends a user to the callback with function signature function (err, user):
-//     // yourApi.fetchUserById(id, callback);
-//   });
 
 
 everyauth
@@ -85,6 +44,8 @@ everyauth
 				console.log('new user!');
 				user = fbUserMetadata;
 				user.points = 0;
+				user.spam_count = 0;
+				user.spam_warned = false;
 				user.unreadMessages = [];
 				user.unreadMessages.push('<div class="alert"><button type="button" class="close" data-dismiss="alert">×</button>Friendly reminder: don\'t spam nonsensical words or you will be permanently banned!</div>');
 				user.timestamps = [];
@@ -181,34 +142,6 @@ function generate_title() {
 		function(){return noun({capitalize:true}) + " of the " + noun();},
 	]
 	return title_templates[Math.floor(Math.random() * title_templates.length)]();
-}
-
-//this may not be necessary if we generate first picture from title as well
-function firstWords() {
-	var words = [['Once','upon','a'],
-	['It','was','a'],
-	['Darkness','fell','upon'],
-	['Long','ago,','in'],
-	['I','wandered','into'],
-	['The','sound','of'],
-	['Last','night','I'],
-	['Do','you','ever']
-	['I','used','to'],
-	['I','drank','the'],
-	['I','went','to'],
-	['Alice','was','murdered'],
-	['Let\'s','drink','to'],
-	['The','sun','shone'],
-	['We','had','turkey'],
-	['Dear','Diary','I'],
-	['Why','can\'t','I'],
-	['I','can\'t','stop'],
-	['My','cat','ate'],
-	['Do','you','like'],
-	['I','injured','my'],
-	['Call','me','Ishmael']];
-	
-	return words[Math.floor(Math.random() * words.length)];
 }
 
 function randomPrettyPic() {
@@ -577,11 +510,16 @@ io.sockets.on('connection', function(socket){
 			, snippet_index = report.snippet_index
 			, created = Date.now();
 			
-			stories.findOne({'_id':new ObjectID(story_id)},function(err,story){
-				if (err) {console.log(new Error(err.message)); return false;}
-				story.snippets[snippet_index].spam_reports.push({'created':created,'submitted_by':submitted_by});
-				stories.save(story);
-			});
+			try {
+				stories.findOne({'_id':new ObjectID(story_id)},function(err,story){
+					if (err) {console.log(new Error(err.message)); return false;}
+					story.snippets[snippet_index].spam_reports.push({'created':created,'submitted_by':submitted_by});
+					stories.save(story);
+				});
+			} catch (e) {
+				console.log('spam report unsuccessful...')
+			}
+			
 	});
 	
 	socket.on('display story',function(story_id){
@@ -707,16 +645,16 @@ server.get('/contact', function(req,res){
 // 	});
 // });
 // 
-server.get('/updatecache',function(req,res){
-	console.log('starting cron job for cached_finished...');
-	finished_stories.find({},function(err,cursor){
-		cursor.each(function(err,story){
-			if (story !== null) cached_finished[story._id] = story;
-		});
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		res.end('Done!\n');
-	});
-});
+// server.get('/updatecache',function(req,res){
+// 	console.log('starting cron job for cached_finished...');
+// 	finished_stories.find({},function(err,cursor){
+// 		cursor.each(function(err,story){
+// 			if (story !== null) cached_finished[story._id] = story;
+// 		});
+// 		res.writeHead(200, {'Content-Type': 'text/plain'});
+// 		res.end('Done!\n');
+// 	});
+// });
 
 
 //achievements urls -> need to be scraped by Facebook
@@ -800,15 +738,75 @@ var updateBlocklist = new cron.CronJob('0 0 * * *', function(){
   true /* Start the job right now */
 );
 
-var updateActive = new cron.CronJob('5 0 * * *',function(){
-	//update number of active stories
+var updateActive = new cron.CronJob('0 0 * * *',function(){
+	//runs every hour
 	activeStories = 0;
 	stories.find({$or:[{'lock':{$exists:false}},{'lock.created':{$lte:Date.now()-300000}}]},function(err,cursor){
 		cursor.each(function(err,story){
 			activeStories += 1;
 		})
 	});
-},function(){},true);
+},null,true);
+
+
+var cleanSpam = new cron.CronJob('* 0 * * *',function(){
+	//run every 30 min
+	console.log('initiating spam cleaning...');
+	
+	stories.find({},function(err,cursor){
+		//probably more efficient to not return all stories but oh well
+		if (err) return false;
+		cursor.each(function(err,story){
+			if (story === null) return false;
+			var changed = false
+				, offenders = {};
+			for (var i in story.snippets) {
+				if (story.snippets[i].spam_reports.length > 2) {
+					changed = true;
+					var offending_id = story.snippets[i].user_id;
+					if (offenders.hasOwnProperty(offending_id)) {
+						offenders[offending_id] += 1;
+					} else {
+						offenders[offending_id] = 1;
+					}
+					 story.snippets.splice(i,1);//remove the snippet
+				} else {
+					//not a spammy snippet
+				}
+			} //end looping over snippets
+			
+			if (changed) {
+				stories.save(story,function(err){});
+			}
+			
+			//find all offending users and update their spam_count, then check if they need to be blocked
+			var id_array = [];
+			for (var id in offenders) {
+				id_array.push(id);
+			}
+			//we only need a couple of the fields
+			users.find({'id':{$in:id_array}},{id:1,spam_count:1,unreadMessages:1},function(err,cursor){
+				cursor.each(function(err,user){
+					if (user === null) return false;
+					user.spam_count += offenders[user.id];
+					if (!user.spam_warned && user.spam_count > 10) {
+						//first offense - send a spam warning
+						user.unreadMessages.push('<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">×</button>Hey asshole! Stop spamming or you will be permanently banned! If you feel this has been a mistake please contact admin</div>')
+						user.spam_warned = true;
+					} else if (user.spam_warned && user.spam_count > 20) {
+						//second offense - add user to blocklist
+						user_blocklist.save(user);
+					}
+					users.save(user);
+				});
+			});
+			
+			
+		});
+	});
+},function(){
+	console.log('spam counts should be updated for all users...');
+},true);
 
 
 
