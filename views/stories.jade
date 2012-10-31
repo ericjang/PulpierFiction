@@ -42,7 +42,7 @@ block content
 								div.span2.cover(style="text-align:center;position:relative")
 									//-all of its child elements will be positioned relative to it
 									a(href="#"+bookshelf[i][j].story_id,story_id=bookshelf[i][j].story_id)
-										img(src=bookshelf[i][j].cover_pic,style="position:absolute;bottom:0;margin-left:-10px")
+										img(src=bookshelf[i][j].cover_pic,style="position:absolute;bottom:0;margin-left:-10px",rel="tooltip",data-original-title=bookshelf[i][j].title)
 	div#hiddenstories(style="display:none")
 		//-stories actually saved into webpage (display:none).
 		//have a story_id and class=story! <-- this is important

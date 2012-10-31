@@ -4,6 +4,7 @@ var connect = require('connect')
     , io = require('socket.io')
     , port = process.env.PORT || 8081
 		, everyauth = require('everyauth')
+		, request = require('request')
 		, sanitize = require('validator').sanitize
 		, mongodb = require('mongodb')
 		, ObjectID = require('mongodb').ObjectID
@@ -16,11 +17,10 @@ var connect = require('connect')
 		, activeStories = 0//number of uncompleted stories at any given time
 		, word_limit = 500//max number words before story becomes inactive
 		, cached_finished = {}
-		, blocklist = {};
+		, blocklist = {}
+		, achievementsList = require('./achievements.json');
 
 var mongourl = (process.env.NODE_ENV == 'production') ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
-
-
 var db = mongo.db(mongourl);
 
 var stories = db.collection('stories');
@@ -83,6 +83,7 @@ everyauth
 			if (user == null) {
 				console.log('new user!');
 				user = fbUserMetadata;
+				user.points = 0;
 				user.unreadMessages = [];
 				user.unreadMessages.push('<div class="alert"><button type="button" class="close" data-dismiss="alert">×</button>Friendly reminder: don\'t spam nonsensical words or you will be permanently banned!</div>');
 				user.timestamps = [];
@@ -466,7 +467,33 @@ io.sockets.on('connection', function(socket){
 			stories.findOne({'_id':story_objID},function(err,story){
 				
 				if (story !== null && story.lock.access_token === access_token) {
-					return renderStory(user_id, story, words);
+					//update the user's achievements
+					users.findOne({id:user_id},function(err,user){
+						if (err) return false;
+						
+						user.points += 1;
+						if (achievementsList.hasOwnProperty(user.points)) {
+							debugger;//check achievementsList
+							var ach = achievementsList[user.points];
+							
+							//make the POST request to the FB api... hope this works...
+							request({
+									uri : 'https://graph.facebook.com/'+ user_id +'/achievements?achievement=http://pulpier-fiction.herokuapp.com'+ach.url+'&access_token=131998673616071|l4c8OtBmJWG-uWknTBrR589S7LU'
+								, method : 'POST'
+							},function(err){
+								if (err) console.log('problem with facebook achievement request...');
+							});
+							
+							//don't bother putting it into messages. send it straight away to user.
+							socket.emit('user message','<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">×</button>Congratulations! You just earned the <b>' + ach.title + '</b> badge! That\'s for ' + ach.condition +'</div>')
+						}
+						users.save(user,function(err,ok){});
+						
+					});
+					
+					
+					return renderStory(user_id, story, words);//send it to the database...
+					
 				} else {
 					console.log('access token does not match! Rejecting changes...');
 				}
@@ -658,51 +685,37 @@ server.get('/contact', function(req,res){
 // 	});
 // });
 // 
-// server.get('/updatecache',function(req,res){
-// 	console.log('starting cron job for cached_finished...');
-// 	finished_stories.find({},function(err,cursor){
-// 		cursor.each(function(err,story){
-// 			if (story !== null) cached_finished[story._id] = story;
-// 		});
-// 		res.writeHead(200, {'Content-Type': 'text/plain'});
-// 		res.end('Done!\n');
-// 	});
-// });
+server.get('/updatecache',function(req,res){
+	console.log('starting cron job for cached_finished...');
+	finished_stories.find({},function(err,cursor){
+		cursor.each(function(err,story){
+			if (story !== null) cached_finished[story._id] = story;
+		});
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.end('Done!\n');
+	});
+});
 
 
 //achievements urls -> need to be scraped by Facebook
+//dynamically create each of the achievement handlers
 
-//babytalk
-server.get('/babytalk', function(req,res){
-  res.render('achievement.jade', {
-    locals : { 
-              title : 'Achievement : Baby Talk'
-             ,description: 'Wrote your first three words!'
-						 ,img_url : 'http://www.umcdhm.org/2012d.gif'
-             ,author: 'Eric Jang'
-						 ,points : 10
-						 ,url:"babytalk"
-             ,analyticssiteid: 'UA-35901019-1'
-						 ,achievementMessage:'Baby Talk - write your first three words! Go get em, tiger!' 
-            }
-  });
-});
-
-server.get('/misunderstood_writer', function(req,res){
-  res.render('achievement.jade', {
-    locals : { 
-              title : 'Achievement : Misunderstood Writer'
-             ,description: 'Write thirty words'
-						 ,img_url : 'http://public.wsu.edu/~campbelld/pics/emily.jpg'//emily dickinson... ha ha
-             ,author: 'Eric Jang'
-						 ,points : 100
-						 ,url:"misunderstood_writer"
-             ,analyticssiteid: 'UA-35901019-1'
-						 ,achievementMessage:'Misunderstood Writer - write thirty words!' 
-            }
-  });
-});
-
+for (var point in achievementsList) {
+	var url = achievementsList[point].url;
+	server.get(url,function(req,res){
+	  res.render('achievement.jade', {
+	    locals : { 
+	              title : 'Achievement : ' + achievementsList[point].title
+	             ,description: achievementsList[point].condition
+							 ,img_url : achievementsList[point].img_url
+	             ,author: 'Eric Jang'
+							 ,points : (achievementsList[point].point_val) ? achievementsList[point].point_val : point
+							 ,url: url
+	             ,analyticssiteid: 'UA-35901019-1'
+	            }
+	  });
+	});
+}
 
 //A Route for Creating a 500 Error (Useful to keep around)
 server.get('/500', function(req, res){
@@ -732,7 +745,7 @@ var updateFinished = new cron.CronJob('0 0 * * *', function(){
 		console.log('starting cron job for cached_finished...');
 		finished_stories.find({},function(err,cursor){
 			cursor.each(function(err,story){
-				cached_finished[story.story_id] = story;
+				if (story !== null) cached_finished[story.story_id] = story;
 			});
 		});
 		

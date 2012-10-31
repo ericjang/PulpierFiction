@@ -17,22 +17,13 @@ html.no-js(lang='en',xmlns="http://www.w3.org/1999/xhtml",xmlns:og="http://ogp.m
 		meta(name="viewport", content='width=device-width, initial-scale=1')
 		//Facebook Open Graph Stuff
 		meta(property="og:type",content="game.achievement")
-		meta(property="og:url",content="pulpierfiction.aws.af.cm/"+url)
+		meta(property="og:url",content="http://pulpier-fiction.herokuapp.com"+url)
 		meta(property="og:title",content=title)
 		meta(property="og:description",content=description)
 		meta(property="og:image",content=img_url)
 		meta(property="game:points",content=points)
 		meta(property="fb:app_id",content="131998673616071")
-		link(rel='stylesheet', href='/css/bootstrap.min.css')
-		link(rel='stylesheet', href='/css/bootstrap-responsive.min.css')
 		style
-			body {
-				background : url('images/bg_tile.png');
-				background-repeat : repeat;
-			}
 		block custom_styles
 		body
-			h1 Congratulations!
-			p 
-				| You just achieved
-				=achievementMessage
+			p achievements page, for scraping a la Open Graph.

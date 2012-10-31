@@ -114,9 +114,6 @@ $(document).ready(function() {
 	
 	
 	
-	
-	
-	
 	//focus the submit button
 	$('#playbutton').focus();
 	

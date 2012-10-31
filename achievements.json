@@ -1,0 +1,45 @@
+{
+	"1": {
+		"url":"/babytalk",
+		"title":"Baby Talk",
+		"condition":"posting 1 snippet",
+		"img_url":"http://3.bp.blogspot.com/-yNyv4N5EndA/T8I5ZEWv9II/AAAAAAAABBc/BqqXwyNxY1o/s1600/Being+Misunderstood+as+Writer.jpg"
+	},
+	"10":{
+		"url":"/misunderstoodWriter",
+		"title":"Misunderstood Writer",
+		"condition":"posting 10 snippets",
+		"img_url":"http://i3.kym-cdn.com/photos/images/newsfeed/000/225/312/feministchick.jpg"
+	},
+	"2":{
+		"url":"/tormentedPoet",
+		"title":"Tormented Poet",
+		"condition":"posting 2 snippets. It's all about saying saying less ... with less.",
+		"img_url":"http://poestories.com/images/poe_portrait.jpg"
+	},
+	"3":{
+		"url":"/",
+		"title":"Good Job",
+		"condition":"... doing a good job",
+		"img_url":"http://public.wsu.edu/~campbelld/pics/emily.jpg"
+	},
+	"5":{
+		"url":"/faithful",
+		"title":"Faithful",
+		"condition":"sticking with us even when we didn't give you a reward at 4 snippets",
+		"img_url":"http://4.bp.blogspot.com/-cDSZbo5PrY8/UAu7r67mqYI/AAAAAAAABJ0/iRDyZjE2cJg/s1600/jesus.jpg"
+	},
+	"50":{
+		"url":"/endurance",
+		"title":"Endurance",
+		"condition":"not giving up even when we witheld rewards from you.",
+		"img_url":""
+	},
+	"dickweed":{
+		"url":"/dickweed",
+		"title":"DICKWEED",
+		"condition":"posting a bigoted racial slur.",
+		"img_url":"http://i1.kym-cdn.com/photos/images/newsfeed/000/349/990/304.gif",
+		"point_val":"1"
+	}
+}

@@ -10,6 +10,10 @@ $(document).ready(function() {
 	
 	var socket = io.connect();
 	
+	//bind tooltip event to all covers
+	$('.cover img').tooltip();
+	
+	
 	function launchFancybox(story_id) {
 		
 		//fire up fancybox!!!
