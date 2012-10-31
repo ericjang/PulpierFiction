@@ -2,7 +2,7 @@
 var connect = require('connect')
     , express = require('express')
     , io = require('socket.io')
-    , port = (process.env.PORT || 8081)
+    , port = process.env.PORT || 8081
 		, everyauth = require('everyauth')
 		, sanitize = require('validator').sanitize
 		, mongodb = require('mongodb')
@@ -19,6 +19,8 @@ var connect = require('connect')
 		, blocklist = {};
 
 var mongourl = (process.env.NODE_ENV == 'production') ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
+
+console.log('mongourl is...',mongourl);
 
 var db = mongo.db(mongourl);
 
@@ -380,7 +382,7 @@ function renderStory(user_id,story,words,lastEdited) {
 
 
 //Setup Socket.IO
-var io = io.listen(server);
+var io = io.listen(server,{'log level':1});
 io.sockets.on('connection', function(socket){
   
 	function sendStory(user_id,access_token,query){
