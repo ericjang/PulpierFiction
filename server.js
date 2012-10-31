@@ -20,7 +20,6 @@ var connect = require('connect')
 
 var mongourl = (process.env.NODE_ENV == 'production') ? process.env.MONGOHQ_URL : 'localhost:27017/pulpierfiction_db';
 
-console.log('mongourl is...',mongourl);
 
 var db = mongo.db(mongourl);
 
@@ -387,7 +386,7 @@ if (process.env.NODE_ENV == 'production') {
 	var io = io.listen(server,{
 		'log level':1,
 		"transports" : ["xhr-polling"],
-		"polling duration", 10
+		"polling duration": 10
 	});
 } else {
 	var io = io.listen(server); 
