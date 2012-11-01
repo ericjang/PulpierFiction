@@ -39,23 +39,7 @@ everyauth
 	.appId('131998673616071')
 	.appSecret('785eb60af1a166f9440c575a1d2d064c')
 	.findOrCreateUser( function (session, accessToken, accessTokenExtra, fbUserMetadata) {
-		console.log(fbUserMetadata.name);
-		users.findOne({id:fbUserMetadata.id},function(err,user){
-			if (user == null) {
-				console.log('new user!');
-				create_user(fbUserMetadata,function(user){
-					users.save(user,function(err,ok){
-						if (err){
-							console.log('problem with new user!');
-							console.log(new Error(err.message));
-						}
-					});
-				});
-			} else if (user) {
-				console.log('old user!');
-				user.timestamps.push(Date.now());
-			}
-		});
+		console.log('fbUserMetadata name ',fbUserMetadata.name);
 		return true;
 	})
 	.scope('publish_actions')//game achievements API
@@ -360,6 +344,27 @@ io.sockets.on('connection', function(socket){
 			socket.emit('story',story);
 		});
 	}
+	
+	//this needs to go somewhere. maybe initiated by initial story request...
+	// users.findOne({id:fbUserMetadata.id},function(err,user){
+	// 		if (user === null) {
+	// 			console.log('new user!');
+	// 			create_user(fbUserMetadata,function(user){
+	// 				users.save(user,function(err,ok){
+	// 					if (err){
+	// 						console.log('problem with new user!');
+	// 						console.log(new Error(err.message));
+	// 					}
+	// 				});
+	// 			});
+	// 		} else if (user) {
+	// 			console.log('old user!');
+	// 			user.timestamps.push(Date.now());
+	// 		}
+	// 	});
+	
+	
+	
 	
 	socket.on('submit',function(data){
 		
