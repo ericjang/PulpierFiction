@@ -2,16 +2,16 @@
 
 $(document).ready(function() {
 	//first things that need to happen...
-	var user_id = $('#user_id p').text(),
-	var access_token = $('#access_token p').text();
-	var name = $('#name p').text();
-	
-  var socket = io.connect();
+	var user_id = $('#user_id p').text()
+		, access_token = $('#access_token p').text()
+		, name = $('#name p').text()
+		, socket = io.connect();
 	
 	//make first (and initial) request for a story (and for any user messages that they need to see)
 	socket.emit('initial story',{
 			user_id : user_id
 		, access_token : access_token
+		, name : name
 	});
 
 
