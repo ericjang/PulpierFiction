@@ -39,9 +39,11 @@ everyauth
 	.appId('131998673616071')
 	.appSecret('785eb60af1a166f9440c575a1d2d064c')
 	.findOrCreateUser( function (session, accessToken, accessTokenExtra, fbUserMetadata) {
+		console.log(fbUserMetadata.name);
 		users.findOne({id:fbUserMetadata.id},function(err,user){
 			if (user == null) {
 				console.log('new user!');
+				return true;
 				user = fbUserMetadata;
 				user.points = 0;
 				user.spam_count = 0;
@@ -52,6 +54,7 @@ everyauth
 				user.timestamps.push(Date.now());
 				users.save(user,function(err,ok){
 					if (err){
+						console.log('problem with new user!');
 						console.log(new Error(err.message));
 					}
 				});
@@ -323,10 +326,7 @@ var io = io.listen(server);
 io.configure('production',function(){
 	io.set("transports", ["xhr-polling"]); 
 	io.set("polling duration", 10);
-	io.set("log level",1);
 });
-
-
 
 
 
