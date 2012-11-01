@@ -43,20 +43,13 @@ everyauth
 		users.findOne({id:fbUserMetadata.id},function(err,user){
 			if (user == null) {
 				console.log('new user!');
-				return true;
-				user = fbUserMetadata;
-				user.points = 0;
-				user.spam_count = 0;
-				user.spam_warned = false;
-				user.unreadMessages = [];
-				user.unreadMessages.push('<div class="alert"><button type="button" class="close" data-dismiss="alert">×</button>Friendly reminder: don\'t spam nonsensical words or you will be permanently banned!</div>');
-				user.timestamps = [];
-				user.timestamps.push(Date.now());
-				users.save(user,function(err,ok){
-					if (err){
-						console.log('problem with new user!');
-						console.log(new Error(err.message));
-					}
+				create_user(user,function(user){
+					users.save(user,function(err,ok){
+						if (err){
+							console.log('problem with new user!');
+							console.log(new Error(err.message));
+						}
+					});
 				});
 			} else if (user) {
 				console.log('old user!');
@@ -114,7 +107,18 @@ server.listen(port);
 //              APP LOGIC                //
 ///////////////////////////////////////////
 
-
+function create_user(user,callback) {
+	//sets up a new user...
+	user = fbUserMetadata;
+	user.points = 0;
+	user.spam_count = 0;
+	user.spam_warned = false;
+	user.unreadMessages = [];
+	user.unreadMessages.push('<div class="alert"><button type="button" class="close" data-dismiss="alert">×</button>Friendly reminder: don\'t spam nonsensical words or you will be permanently banned!</div>');
+	user.timestamps = [];
+	user.timestamps.push(Date.now());
+	callback(user);
+}
 
 function noun(options) {
 	//returns a random noun
