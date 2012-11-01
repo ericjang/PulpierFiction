@@ -46,6 +46,8 @@ block content
 			p= everyauth.facebook.user.id
 		div#access_token(style="visibility : hidden")
 			p= everyauth.facebook.accessToken
+		div#name(style="visibility:hidden")
+			p= everyauth.facebook.user.name
 		div#spamflag_wrapper(style="display:none;")
 			button#flagspam.btn.btn-danger(type="button",style="margin:auto; width:210px") Flag as Spam
 		#results

@@ -91,9 +91,11 @@ server.listen(port);
 //              APP LOGIC                //
 ///////////////////////////////////////////
 
-function create_user(fbUserMetadata,callback) {
+function create_user(name,user_id,callback) {
 	//sets up a new user...
-	var user = fbUserMetadata;
+	var user = {};
+	user.name = name;
+	user.id =  user_id;
 	user.points = 0;
 	user.spam_count = 0;
 	user.spam_warned = false;
@@ -345,26 +347,6 @@ io.sockets.on('connection', function(socket){
 		});
 	}
 	
-	//this needs to go somewhere. maybe initiated by initial story request...
-	// users.findOne({id:fbUserMetadata.id},function(err,user){
-	// 		if (user === null) {
-	// 			console.log('new user!');
-	// 			create_user(fbUserMetadata,function(user){
-	// 				users.save(user,function(err,ok){
-	// 					if (err){
-	// 						console.log('problem with new user!');
-	// 						console.log(new Error(err.message));
-	// 					}
-	// 				});
-	// 			});
-	// 		} else if (user) {
-	// 			console.log('old user!');
-	// 			user.timestamps.push(Date.now());
-	// 		}
-	// 	});
-	
-	
-	
 	
 	socket.on('submit',function(data){
 		
@@ -478,7 +460,8 @@ io.sockets.on('connection', function(socket){
 	
 	socket.on('initial story',function(user){
 		var user_id = sanitize(user.user_id).xss()
-			,	access_token = sanitize(user.access_token).xss();
+			,	access_token = sanitize(user.access_token).xss()
+			, name = sanitize(user.name).xss();
 		
 		
 		users.findOne({id:user_id},function(err,user){
@@ -493,6 +476,15 @@ io.sockets.on('connection', function(socket){
 				}
 				user.unreadMessages = [];//clear messages
 				users.save(user,function(err,ok){});
+			} else if (user === null) {
+				//add new user
+				create_user(name,user_id,function(user){
+					//save to database
+					users.save(user,function(){
+						console.log('user saved!');
+					});
+				});
+				
 			}
 			
 			//probability new story is created is 1 if activeStories < 4, else 0.2

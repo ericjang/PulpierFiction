@@ -2,8 +2,9 @@
 
 $(document).ready(function() {
 	//first things that need to happen...
-	user_id = $('#user_id p').text(),
-	access_token = $('#access_token p').text();
+	var user_id = $('#user_id p').text(),
+	var access_token = $('#access_token p').text();
+	var name = $('#name p').text();
 	
   var socket = io.connect();
 	
